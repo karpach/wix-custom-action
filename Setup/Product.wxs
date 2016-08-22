@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+	<Product Id="88ad8dcb-2485-4e55-88a6-12cde7507aaa" Name="Setup" Language="1033" Version="1.0.0.0" Manufacturer="Viktar" UpgradeCode="2b63b94f-676d-4823-8043-52a7e2f3b6d2">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"/>
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate />
+
+		<Feature Id="ProductFeature" Title="Setup" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+		</Feature>
+    <Property Id='NETSHARE' Value='\\nuc\share\tmp' />
+    <SetDirectory Id='NETSHAREFOLDER' Value='[NETSHARE]' />
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='NETSHAREFOLDER' Name='network'/>
+      </Directory>
+    </Directory>  
+	</Fragment>
+  <!--
+  <Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">			
+      <Component Id='Settings' Guid='88ad8dcb-2485-4e55-88a6-12cde75077c3'>                
+        <util:XmlConfig Id='XmlSettings1' File='App.config'
+          Action='create' Name='add' ElementPath='//configuration/appSettings' Sequence='1' />        
+      </Component>
+		</ComponentGroup>    
+	</Fragment>-->
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="NETSHAREFOLDER">			
+      <Component Id='Settings' Guid='88ad8dcb-2485-4e55-88a6-12cde75077c3'>
+        <CreateFolder/>
+        <File Id='AppConfig' src='[NETSHAREFOLDER]App.config'/>
+        <util:XmlFile Id='XmlSettings1' File='[#AppConfig]'
+          Action='createElement' Name='add' ElementPath='//configuration/appSettings' Sequence='1' />        
+      </Component>
+		</ComponentGroup>    
+	</Fragment>
+</Wix>
